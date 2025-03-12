@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/dist/aws-amplify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/dist/aws-amplify.min.js" integrity="sha256-hUYMrwaaQkID9rKuYD57COYXo9xNU91+uGqMAZnwsAA=" crossorigin="anonymous"></script>
     <script src="auth-config.js"></script>
 </head>
 <body>
@@ -33,8 +33,27 @@
 
     <script>
         // Initialize Amplify
-        AWS.Amplify.configure(authConfig);
-        const Auth = AWS.Amplify.Auth;
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                // Check if Amplify is defined
+                if (typeof Amplify !== 'undefined') {
+                    Amplify.configure(authConfig);
+                    window.Auth = Amplify.Auth;
+                } else {
+                    console.error('AWS Amplify library not loaded properly');
+                    // Show an error message
+                    document.getElementById('error-message').textContent = 'Authentication service unavailable';
+                }
+            } catch (error) {
+                console.error('Error initializing AWS Amplify:', error);
+            }
+        });
+        
+        // Create a placeholder Auth object if AWS isn't loaded
+        const Auth = window.Auth || {
+            currentAuthenticatedUser: () => Promise.reject(new Error('Auth not initialized')),
+            signIn: () => Promise.reject(new Error('Auth not initialized'))
+        };
 
         // Check if user is already authenticated
         document.addEventListener('DOMContentLoaded', async () => {
