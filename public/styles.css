@@ -16,6 +16,75 @@ body {
     margin-top: 50px;
 }
 
+/* Header with user info */
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.header-bar h1 {
+    margin: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#username-display {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Auth form styles */
+.auth-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.form-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.error-message {
+    color: #e74c3c;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #fadbd8;
+    border-radius: 4px;
+    display: none;
+}
+
+.error-message:not(:empty) {
+    display: block;
+}
+
 h1 {
     color: #333;
     text-align: center;
@@ -25,7 +94,7 @@ p {
     margin-bottom: 20px;
 }
 
-button {
+.btn-primary, #fetch-btn {
     display: block;
     width: 200px;
     margin: 20px auto;
@@ -38,8 +107,22 @@ button {
     font-size: 16px;
 }
 
-button:hover {
+.btn-primary:hover, #fetch-btn:hover {
     background-color: #0056b3;
+}
+
+.btn-secondary {
+    padding: 8px 15px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
 }
 
 .message-box {
