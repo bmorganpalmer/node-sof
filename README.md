@@ -2,6 +2,8 @@
 
 A basic Node.js application designed to be deployed on AWS Amplify.
 
+> **Note**: When deployed to AWS Amplify, this application uses a static JSON file (`hello.json`) instead of a dynamic API endpoint. This is because AWS Amplify's standard hosting doesn't support running a Node.js server. For dynamic API functionality in production, we recommend using AWS Lambda functions through Amplify's backend services.
+
 ## Local Development
 
 1. Clone this repository
