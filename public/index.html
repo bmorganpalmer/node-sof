@@ -24,93 +24,92 @@
         <div id="message" class="message-box"></div>
     </div>
 
-    <script>
-        // Initialize Amplify
-        document.addEventListener('DOMContentLoaded', () => {
-            try {
-                // Check if Amplify is defined
-                if (typeof Amplify !== 'undefined') {
-                    Amplify.configure(authConfig);
-                    window.Auth = Amplify.Auth;
-                } else {
-                    console.error('AWS Amplify library not loaded properly');
-                    // Show an error message or handle gracefully
-                    document.getElementById('message').textContent = 'Authentication service unavailable';
-                }
-            } catch (error) {
-                console.error('Error initializing AWS Amplify:', error);
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Ensure authConfig is loaded before using Amplify
+            if (typeof authConfig !== 'undefined' && typeof Amplify !== 'undefined') {
+                Amplify.configure(authConfig);
+                window.Auth = Amplify.Auth;
+                checkAuth(); // Ensure authentication check happens after initialization
+            } else {
+                console.error('AWS Amplify library or authConfig not loaded properly');
+                document.getElementById('message').textContent = 'Authentication service unavailable';
             }
-        });
-        
-        // Create a placeholder Auth object if AWS isn't loaded
-        const Auth = window.Auth || {
-            currentAuthenticatedUser: () => Promise.reject(new Error('Auth not initialized')),
-            signOut: () => Promise.reject(new Error('Auth not initialized'))
-        };
-        
-        // Check if user is authenticated
-        async function checkAuth() {
-            try {
-                const user = await Auth.currentAuthenticatedUser();
-                console.log('User is signed in:', user);
-                
-                // Display username
-                const usernameDisplay = document.getElementById('username-display');
-                usernameDisplay.textContent = user.username || 'Authenticated User';
-                
-                // Show logout button, hide login button
-                document.getElementById('logout-btn').style.display = 'block';
-                document.getElementById('login-btn').style.display = 'none';
-                
-                return true;
-            } catch (error) {
-                console.log('User is not signed in');
-                
-                // Hide logout button, show login button
-                document.getElementById('logout-btn').style.display = 'none';
-                document.getElementById('login-btn').style.display = 'block';
-                
-                return false;
-            }
+        } catch (error) {
+            console.error('Error initializing AWS Amplify:', error);
         }
+    });
+    
+    // Create a placeholder Auth object if AWS isn't loaded
+    const Auth = window.Auth || {
+        currentAuthenticatedUser: () => Promise.reject(new Error('Auth not initialized')),
+        signOut: () => Promise.reject(new Error('Auth not initialized'))
+    };
         
-        // Check authentication when page loads
-        document.addEventListener('DOMContentLoaded', checkAuth);
+    // Check if user is authenticated
+    async function checkAuth() {
+        try {
+            const user = await Auth.currentAuthenticatedUser();
+            console.log('User is signed in:', user);
+            
+            // Display username
+            const usernameDisplay = document.getElementById('username-display');
+            usernameDisplay.textContent = user.username || 'Authenticated User';
+            
+            // Show logout button, hide login button
+            document.getElementById('logout-btn').style.display = 'block';
+            document.getElementById('login-btn').style.display = 'none';
+            
+            return true;
+        } catch (error) {
+            console.log('User is not signed in');
+            
+            // Hide logout button, show login button
+            document.getElementById('logout-btn').style.display = 'none';
+            document.getElementById('login-btn').style.display = 'block';
+            
+            return false;
+        }
+    }
+    
+    // Check authentication when page loads
+    document.addEventListener('DOMContentLoaded', checkAuth);
+    
+    // Handle login button
+    document.getElementById('login-btn').addEventListener('click', () => {
+        window.location.href = '/login.html';
+    });
         
-        // Handle login button
-        document.getElementById('login-btn').addEventListener('click', () => {
+    // Handle logout
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        try {
+            await Auth.signOut();
+            console.log('Successfully signed out');
             window.location.href = '/login.html';
-        });
-        
-        // Handle logout
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await Auth.signOut();
-                console.log('Successfully signed out');
-                window.location.href = '/login.html';
-            } catch (error) {
-                console.error('Error signing out: ', error);
+        } catch (error) {
+            console.error('Error signing out: ', error);
+        }
+    });
+    
+    // Fetch message
+    document.getElementById('fetch-btn').addEventListener('click', async () => {
+        try {
+            // Check if user is authenticated
+            const isAuthenticated = await checkAuth();
+            
+            if (isAuthenticated) {
+                const response = await fetch('/hello.json');
+                const data = await response.json();
+                document.getElementById('message').textContent = data.message;
+            } else {
+                document.getElementById('message').textContent = 'Please login to fetch the message';
             }
-        });
-        
-        // Fetch message
-        document.getElementById('fetch-btn').addEventListener('click', async () => {
-            try {
-                // Check if user is authenticated
-                const isAuthenticated = await checkAuth();
-                
-                if (isAuthenticated) {
-                    const response = await fetch('/hello.json');
-                    const data = await response.json();
-                    document.getElementById('message').textContent = data.message;
-                } else {
-                    document.getElementById('message').textContent = 'Please login to fetch the message';
-                }
-            } catch (error) {
-                console.error('Error fetching message:', error);
-                document.getElementById('message').textContent = 'Error fetching message';
-            }
-        });
+        } catch (error) {
+            console.error('Error fetching message:', error);
+            document.getElementById('message').textContent = 'Error fetching message';
+        }
+    });
     </script>
 </body>
 </html>
