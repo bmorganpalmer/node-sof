@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AWS Amplify App</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/dist/aws-amplify.min.js"></script>
+    <script src="auth-config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Login to AWS Amplify App</h1>
+        
+        <div id="error-message" class="error-message"></div>
+        
+        <form id="login-form" class="auth-form">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Sign In</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Initialize Amplify
+        AWS.Amplify.configure(authConfig);
+        const Auth = AWS.Amplify.Auth;
+
+        // Check if user is already authenticated
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const user = await Auth.currentAuthenticatedUser();
+                // If we get here, user is signed in, redirect to main page
+                window.location.href = '/index.html';
+            } catch (error) {
+                // User is not authenticated, show the login form
+                console.log('User not authenticated');
+            }
+        });
+
+        // Handle login form submission
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessageElement = document.getElementById('error-message');
+            
+            try {
+                errorMessageElement.textContent = '';
+                
+                // Sign in the user
+                const user = await Auth.signIn(username, password);
+                console.log('Login successful');
+                
+                // Redirect to the main page
+                window.location.href = '/index.html';
+            } catch (error) {
+                console.error('Error during login:', error);
+                errorMessageElement.textContent = error.message || 'Failed to login. Please check your credentials.';
+            }
+        });
+    </script>
+</body>
+</html>
