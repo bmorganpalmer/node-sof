@@ -1,0 +1,21 @@
+{
+  "name": "simple-amplify-app",
+  "version": "1.0.0",
+  "description": "A simple Node.js application for AWS Amplify",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "build": "mkdir -p dist && cp -R public/* dist/ && cp src/app.js dist/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aws",
+    "amplify",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
