@@ -5,21 +5,71 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simple AWS Amplify App</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/dist/aws-amplify.min.js"></script>
+    <script src="auth-config.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to my AWS Amplify App</h1>
-        <p>This is a simple Node.js application deployed on AWS Amplify.</p>
+        <div class="header-bar">
+            <h1>Welcome to my AWS Amplify App</h1>
+            <div class="user-info">
+                <span id="username-display"></span>
+                <button id="logout-btn" class="btn-secondary">Logout</button>
+            </div>
+        </div>
+        
+        <p>This is a simple Node.js application deployed on AWS Amplify with Cognito authentication.</p>
         <button id="fetch-btn">Fetch Message</button>
         <div id="message" class="message-box"></div>
     </div>
 
     <script>
+        // Initialize Amplify
+        AWS.Amplify.configure(authConfig);
+        const Auth = AWS.Amplify.Auth;
+        
+        // Check if user is authenticated
+        async function checkAuth() {
+            try {
+                const user = await Auth.currentAuthenticatedUser();
+                console.log('User is signed in:', user);
+                
+                // Display username
+                const usernameDisplay = document.getElementById('username-display');
+                usernameDisplay.textContent = user.username || 'Authenticated User';
+                
+                return true;
+            } catch (error) {
+                console.log('User is not signed in');
+                // Redirect to login page
+                window.location.href = '/login.html';
+                return false;
+            }
+        }
+        
+        // Check authentication when page loads
+        document.addEventListener('DOMContentLoaded', checkAuth);
+        
+        // Handle logout
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            try {
+                await Auth.signOut();
+                console.log('Successfully signed out');
+                window.location.href = '/login.html';
+            } catch (error) {
+                console.error('Error signing out: ', error);
+            }
+        });
+        
+        // Fetch message
         document.getElementById('fetch-btn').addEventListener('click', async () => {
             try {
-                const response = await fetch('/hello.json');
-                const data = await response.json();
-                document.getElementById('message').textContent = data.message;
+                // Verify user is still authenticated
+                if (await checkAuth()) {
+                    const response = await fetch('/hello.json');
+                    const data = await response.json();
+                    document.getElementById('message').textContent = data.message;
+                }
             } catch (error) {
                 console.error('Error fetching message:', error);
                 document.getElementById('message').textContent = 'Error fetching message';
