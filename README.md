@@ -1,8 +1,21 @@
-# Simple AWS Amplify App
+# Simple AWS Amplify App with Cognito Authentication
 
-A basic Node.js application designed to be deployed on AWS Amplify.
+A Node.js application designed to be deployed on AWS Amplify with Amazon Cognito user authentication.
 
 > **Note**: When deployed to AWS Amplify, this application uses a static JSON file (`hello.json`) instead of a dynamic API endpoint. This is because AWS Amplify's standard hosting doesn't support running a Node.js server. For dynamic API functionality in production, we recommend using AWS Lambda functions through Amplify's backend services.
+
+## Authentication
+
+This application uses Amazon Cognito for user authentication with the following configuration:
+
+- **User Pool ID**: us-east-1_HBR3XpaTX
+- **App Client ID**: o3p0n43e4s8c66medioapfkq5
+- **Auth Domain**: us-east-1yeflr48wo.auth.us-east-1.amazoncognito.com
+
+Authentication flow:
+1. Users are redirected to the login page if not authenticated
+2. After successful login, users can access the main application
+3. Users can log out using the logout button in the header
 
 ## Local Development
 
