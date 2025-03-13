@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-   <script src="https://unpkg.com/aws-amplify@5.3.11"></script>
+<script type="module">
+    import { Amplify } from 'https://cdn.skypack.dev/aws-amplify@5.3.11';
+    window.Amplify = Amplify;
+</script>
 </head>
 <body>
     <div class="container">
@@ -67,27 +70,25 @@
         });
 
         // Handle login form submission
-        document.getElementById('login-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
+        document.getElementById('login-btn').addEventListener('click', async () => {
+        try {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
-            const errorMessageElement = document.getElementById('error-message');
-            
-            try {
-                errorMessageElement.textContent = '';
-                
-                // Sign in the user
-                const user = await Auth.signIn(username, password);
-                console.log('Login successful');
-                
-                // Redirect to the main page
-                window.location.href = '/index.html';
-            } catch (error) {
-                console.error('Error during login:', error);
-                errorMessageElement.textContent = error.message || 'Failed to login. Please check your credentials.';
+        
+            if (!username || !password) {
+                alert('Please enter username and password');
+                return;
             }
-        });
+
+            const user = await AuthService.signIn(username, password);
+            console.log('Login successful:', user);
+            window.location.href = '/dashboard.html'; // Redirect to dashboard
+
+        } catch (error) {
+            console.error('Login failed:', error);
+            alert('Invalid username or password');
+        }
+    });
     </script>
 </body>
 </html>
