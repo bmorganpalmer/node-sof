@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-<script type="module">
-    import { Amplify } from 'https://cdn.skypack.dev/aws-amplify@5.3.11';
-    window.Amplify = Amplify;
-</script>
+    <script type="module">
+        import { Amplify } from 'https://cdn.skypack.dev/aws-amplify@5.3.11';
+        window.Amplify = Amplify;
+    </script>
 </head>
 <body>
     <div class="container">
@@ -28,67 +28,55 @@
             </div>
             
             <div class="form-actions">
-                <button type="submit" class="btn-primary">Login</button>
+                <button type="submit" id="login-btn" class="btn-primary">Login</button>
             </div>
         </form>
     </div>
 
     <script>
-        // Initialize Amplify
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // Check if Amplify is defined
                 if (typeof Amplify !== 'undefined') {
                     Amplify.configure(authConfig);
                     window.Auth = Amplify.Auth;
                 } else {
                     console.error('AWS Amplify library not loaded properly');
-                    // Show an error message
                     document.getElementById('error-message').textContent = 'Authentication service unavailable';
+                    return;
+                }
+                
+                // Check if user is already authenticated
+                try {
+                    const user = await Auth.currentAuthenticatedUser();
+                    window.location.href = '/index.html'; // Redirect if authenticated
+                } catch (error) {
+                    console.log('User not authenticated');
                 }
             } catch (error) {
                 console.error('Error initializing AWS Amplify:', error);
             }
         });
-        
-        // Create a placeholder Auth object if AWS isn't loaded
-        const Auth = window.Auth || {
-            currentAuthenticatedUser: () => Promise.reject(new Error('Auth not initialized')),
-            signIn: () => Promise.reject(new Error('Auth not initialized'))
-        };
-
-        // Check if user is already authenticated
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                const user = await Auth.currentAuthenticatedUser();
-                // If we get here, user is signed in, redirect to main page
-                window.location.href = '/index.html';
-            } catch (error) {
-                // User is not authenticated, show the login form
-                console.log('User not authenticated');
-            }
-        });
 
         // Handle login form submission
-        document.getElementById('login-btn').addEventListener('click', async () => {
-        try {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-        
-            if (!username || !password) {
-                alert('Please enter username and password');
-                return;
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+            try {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    alert('Please enter username and password');
+                    return;
+                }
+
+                const user = await Auth.signIn(username, password);
+                console.log('Login successful:', user);
+                window.location.href = '/dashboard.html'; // Redirect to dashboard
+            } catch (error) {
+                console.error('Login failed:', error);
+                alert('Invalid username or password');
             }
-
-            const user = await AuthService.signIn(username, password);
-            console.log('Login successful:', user);
-            window.location.href = '/dashboard.html'; // Redirect to dashboard
-
-        } catch (error) {
-            console.error('Login failed:', error);
-            alert('Invalid username or password');
-        }
-    });
+        });
     </script>
 </body>
 </html>
