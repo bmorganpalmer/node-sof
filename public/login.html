@@ -5,10 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-    <script type="module">
-        import { Amplify } from 'https://cdn.skypack.dev/aws-amplify@5.3.11';
-        window.Amplify = Amplify;
+    // 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js"></script>
+    <script>
+        if (typeof window.Amplify !== 'undefined') {
+            Amplify.configure(authConfig);
+            window.Auth = Amplify.Auth;
+        } else {
+            console.error('AWS Amplify library not loaded properly');
+            document.getElementById('error-message').textContent = 'Authentication service unavailable';
+        }
     </script>
+    //
+    // <script type="module">
+    //    import { Amplify } from 'https://cdn.skypack.dev/aws-amplify@5.3.11';
+    //    window.Amplify = Amplify;
+    // </script>
+    //
 </head>
 <body>
     <div class="container">
