@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="auth-service.js"></script>
+    <script src="auth-config.js"></script>
 </head>
 <body>
     <div class="container">
@@ -18,7 +18,7 @@
             </div>
         </div>
 
-        <p>A simple Node.js application with a generic Cognito authentication.</p>
+        <p>A simple Node.js application integrated with Cognito User Pool authentication.</p>
     </div>
 
     <script>
@@ -36,7 +36,7 @@
             try {
                 const user = await AuthService.getCurrentUser();
                 console.log('User is signed in:', user);
-
+                
                 document.getElementById('username-display').textContent = user.username || 'Authenticated User';
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('login-btn').style.display = 'none';
