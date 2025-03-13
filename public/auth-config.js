@@ -9,16 +9,20 @@ window.AuthService = {
     },
 
     async getCurrentUser() {
-        return fetch('/api/user')
-            .then(response => {
-                if (!response.ok) throw new Error('User not logged in');
-                return response.json();
-            });
+        return new Promise((resolve, reject) => {
+            const user = localStorage.getItem('cognitoUser'); // Simulating session storage
+            if (user) {
+                resolve(JSON.parse(user)); 
+            } else {
+                reject('User is not logged in');
+            }
+        });
     },
 
     async signOut() {
-        return fetch('/api/logout').then(response => {
-            if (!response.ok) throw new Error('Logout failed');
+        return new Promise((resolve) => {
+            localStorage.removeItem('cognitoUser'); // Simulating logout
+            resolve();
         });
     }
 };
