@@ -1,7 +1,7 @@
 const AuthService = {
-    userPoolId: 'YOUR_USER_POOL_ID', // Replace with your User Pool ID
-    clientId: 'YOUR_CLIENT_ID', // Replace with your Client ID
-    cognitoRegion: 'YOUR_COGNITO_REGION', // Replace with your Cognito Region
+    userPoolId: 'us-east-1_HBR3XpaTX', // dev-healthlake-userpool
+    clientId: '4k39avg5kbhk68r58crojnap0e', // system
+    cognitoRegion: 'us-east-1', // Replace with your Cognito Region
     cognitoUser: null,
 
     async init() {
