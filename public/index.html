@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/6.12.0/aws-amplify.min.js" integrity="sha384-7qpyU4qzE6hP6YmL6EShxVz9OSnYGG0GV+xzMdFz+Pn7txPf8hKh6Bd6OlOKP+AG" crossorigin="anonymous"></script>
-    <script src="auth-config.js"></script>
+    <script src="auth-service.js"></script>
 </head>
 <body>
     <div class="container">
@@ -14,12 +13,12 @@
             <h1>Welcome to Healthlake</h1>
             <div class="user-info">
                 <span id="username-display"></span>
-                 <button id="login-btn" class="btn-secondary">Login</button>
+                <button id="login-btn" class="btn-secondary">Login</button>
                 <button id="logout-btn" class="btn-secondary" style="display: none;">Logout</button>
             </div>
         </div>
 
-        <p>This is a simple Node.js application with Cognito authentication.</p>
+        <p>A simple Node.js application with a generic Cognito authentication.</p>
     </div>
 
     <script>
@@ -38,24 +37,18 @@
                 const user = await AuthService.getCurrentUser();
                 console.log('User is signed in:', user);
 
-                const usernameDisplay = document.getElementById('username-display');
-                usernameDisplay.textContent = user.username || 'Authenticated User';
-
+                document.getElementById('username-display').textContent = user.username || 'Authenticated User';
                 document.getElementById('logout-btn').style.display = 'block';
                 document.getElementById('login-btn').style.display = 'none';
 
                 return true;
             } catch (error) {
                 console.log('User is not signed in');
-
                 document.getElementById('logout-btn').style.display = 'none';
                 document.getElementById('login-btn').style.display = 'block';
-
                 return false;
             }
         }
-
-        document.addEventListener('DOMContentLoaded', checkAuth);
 
         document.getElementById('login-btn').addEventListener('click', () => {
             window.location.href = '/login.html';
@@ -68,23 +61,6 @@
                 window.location.href = '/login.html';
             } catch (error) {
                 console.error('Error signing out: ', error);
-            }
-        });
-
-        document.getElementById('fetch-btn').addEventListener('click', async () => {
-            try {
-                const isAuthenticated = await checkAuth();
-
-                if (isAuthenticated) {
-                    const response = await fetch('/hello.json');
-                    const data = await response.json();
-                    document.getElementById('message').textContent = data.message;
-                } else {
-                    document.getElementById('message').textContent = 'Please login to fetch the message';
-                }
-            } catch (error) {
-                console.error('Error fetching message:', error);
-                document.getElementById('message').textContent = 'Error fetching message';
             }
         });
     </script>
