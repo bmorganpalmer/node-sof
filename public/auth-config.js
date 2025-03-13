@@ -1,18 +1,56 @@
-// Cognito configuration
-const authConfig = {
-  Auth: {
-    region: 'us-east-1',
-    userPoolId: 'us-east-1_HBR3XpaTX',
-    userPoolWebClientId: 'o3p0n43e4s8c66medioapfkq5',
-    oauth: {
-      domain: 'us-east-1yeflr48wo.auth.us-east-1.amazoncognito.com',
-      scope: ['email', 'profile', 'openid'],
-      redirectSignIn: window.location.origin,
-      redirectSignOut: window.location.origin,
-      responseType: 'code'
-    }
-  }
-};
+const AuthService = {
+    userPoolId: 'YOUR_USER_POOL_ID', // Replace with your User Pool ID
+    clientId: 'YOUR_CLIENT_ID', // Replace with your Client ID
+    cognitoRegion: 'YOUR_COGNITO_REGION', // Replace with your Cognito Region
+    cognitoUser: null,
 
-// Make it available globally
-window.authConfig = authConfig;
+    async init() {
+        // No external library needed.
+        // You would typically handle Cognito SDK initialization here if you are using it directly.
+        // For simple cases, you could handle login/logout via server-side redirects.
+        // For more complex scenarios, you may need to implement a client-side SDK for Cognito.
+        // This example assumes server-side login handling.
+        console.log("Auth service initialized.");
+    },
+
+    async getCurrentUser() {
+        // This is a placeholder. In a real implementation, you would check for a session
+        // or a cookie that indicates the user is logged in.
+        // Since we are moving away from the amplify SDK, this will need to be replaced with custom logic.
+        // For this example, we will simulate a logged in user.
+        return new Promise((resolve, reject) => {
+            fetch('/api/user')
+            .then(response => {
+                if(response.ok){
+                    return response.json();
+                } else{
+                    reject('User is not logged in');
+                }
+            })
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error=>{
+                reject(error);
+            })
+
+        });
+
+    },
+
+    async signOut() {
+        return new Promise((resolve, reject) => {
+            fetch('/api/logout')
+            .then(response=>{
+                if(response.ok){
+                    resolve();
+                } else{
+                    reject('Logout failed');
+                }
+            })
+            .catch(error =>{
+                reject(error);
+            })
+        });
+    },
+};
