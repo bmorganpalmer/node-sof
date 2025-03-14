@@ -10,8 +10,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="auth-config.js"></script>
+
+    <!-- Load AWS Amplify -->
+    <script type="module">
+        import { Amplify, Auth } from 'https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/+esm';
+        import awsconfig from './auth-config.js';
+
+        Amplify.configure(awsconfig);
+        window.Auth = Auth;  // Expose Auth globally for use in scripts
+    </script>
 </head>
+
 <body>
     <div class="container">
         <div class="header-bar">
@@ -26,48 +35,38 @@
         <p>A simple Node.js application integrated with Cognito User Pool authentication.</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await AuthService.init();
-                checkAuth();
-            } catch (error) {
-                console.error('Error initializing authentication:', error);
-                document.getElementById('message').textContent = 'Authentication service unavailable';
-            }
-        });
+	<script type="module">
+		import { Auth } from 'https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/+esm';
 
-        async function checkAuth() {
-            try {
-                const user = await AuthService.getCurrentUser();
-                console.log('User is signed in:', user);
-                
-                document.getElementById('username-display').textContent = user.username || 'Authenticated User';
-                document.getElementById('logout-btn').style.display = 'block';
-                document.getElementById('login-btn').style.display = 'none';
+		document.addEventListener('DOMContentLoaded', async () => {
+			try {
+				const user = await Auth.currentAuthenticatedUser();
+				console.log('User is signed in:', user);
 
-                return true;
-            } catch (error) {
-                console.log('User is not signed in');
-                document.getElementById('logout-btn').style.display = 'none';
-                document.getElementById('login-btn').style.display = 'block';
-                return false;
-            }
-        }
+				document.getElementById('username-display').textContent = user.username || 'Authenticated User';
+				document.getElementById('logout-btn').style.display = 'block';
+				document.getElementById('login-btn').style.display = 'none';
+			} catch (error) {
+				console.log('User is not signed in');
+				document.getElementById('logout-btn').style.display = 'none';
+				document.getElementById('login-btn').style.display = 'block';
+			}
+		});
 
-        document.getElementById('login-btn').addEventListener('click', () => {
-            window.location.href = '/login.html';
-        });
+		document.getElementById('login-btn').addEventListener('click', () => {
+			window.location.href = '/login.html';
+		});
 
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            try {
-                await AuthService.signOut();
-                console.log('Successfully signed out');
-                window.location.href = '/login.html';
-            } catch (error) {
-                console.error('Error signing out: ', error);
-            }
-        });
-    </script>
+		document.getElementById('logout-btn').addEventListener('click', async () => {
+			try {
+				await Auth.signOut();
+				console.log('Successfully signed out');
+				window.location.href = '/login.html';
+			} catch (error) {
+				console.error('Error signing out:', error);
+			}
+		});
+	</script>
+
 </body>
 </html>
