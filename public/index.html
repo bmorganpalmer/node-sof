@@ -10,15 +10,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
-
-    <!-- why load twice ? -->
-	<script type="module">
-		import { Amplify, Auth } from 'https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js';
-		import awsconfig from './auth-config.js';
-
-		Amplify.configure(awsconfig);
-		window.Auth = Amplify.Auth;
-	</script>
 </head>
 
 <body>
@@ -35,41 +26,41 @@
         <p>Cognito User Authentication.</p>
     </div>
 
-	<script type="module">
-		import { Amplify, Auth } from 'https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js';
-		import awsconfig from './auth-config.js';
+  <script type="module">
+	import { Amplify, Auth } from 'https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/dist/esm/index.mjs';
+	import awsconfig from './auth-config.js';
 
-		Amplify.configure(awsconfig);
-		window.Auth = Amplify.Auth;
+	Amplify.configure(awsconfig);
+	window.Auth = Amplify.Auth;
 
-		document.addEventListener('DOMContentLoaded', async () => {
-			try {
-				const user = await Auth.currentAuthenticatedUser();
-				console.log('User signed in:', user);
-				document.getElementById('username-display').textContent = user.username || 'Authenticated User';
-				document.getElementById('logout-btn').style.display = 'block';
-				document.getElementById('login-btn').style.display = 'none';
-			} catch (error) {
-				console.log('User not signed in');
-				document.getElementById('logout-btn').style.display = 'none';
-				document.getElementById('login-btn').style.display = 'block';
-			}
-		});
+	document.addEventListener('DOMContentLoaded', async () => {
+		try {
+			const user = await Auth.currentAuthenticatedUser();
+			console.log('User signed in:', user);
+			document.getElementById('username-display').textContent = user.username || 'Authenticated User';
+			document.getElementById('logout-btn').style.display = 'block';
+			document.getElementById('login-btn').style.display = 'none';
+		} catch (error) {
+			console.log('User not signed in');
+			document.getElementById('logout-btn').style.display = 'none';
+			document.getElementById('login-btn').style.display = 'block';
+		}
+	});
 
-		document.getElementById('login-btn').addEventListener('click', () => {
+	document.getElementById('login-btn').addEventListener('click', () => {
+		window.location.href = '/login.html';
+	});
+
+	document.getElementById('logout-btn').addEventListener('click', async () => {
+		try {
+			await Auth.signOut();
+			console.log('Successfully signed out');
 			window.location.href = '/login.html';
-		});
-
-		document.getElementById('logout-btn').addEventListener('click', async () => {
-			try {
-				await Auth.signOut();
-				console.log('Successfully signed out');
-				window.location.href = '/login.html';
-			} catch (error) {
-				console.error('Error signing out:', error);
-			}
-		});
-	</script>
+		} catch (error) {
+			console.error('Error signing out:', error);
+		}
+	});
+  </script>
 
 </body>
 </html>
