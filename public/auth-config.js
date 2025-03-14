@@ -1,4 +1,4 @@
-const awsconfig = {
+export default {
     Auth: {
         region: 'us-east-1',
         userPoolId: 'us-east-1_HBR3XpaTX',
@@ -7,5 +7,3 @@ const awsconfig = {
     }
 };
 
-// Exporting for AWS Amplify usage
-export default awsconfig;
