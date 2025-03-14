@@ -6,8 +6,12 @@
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
     <script type="module">
-        import { Amplify } from 'https://cdn.skypack.dev/aws-amplify@5.3.11';
-        window.Amplify = Amplify;
+		import { Amplify } from 'https://cdn.jsdelivr.net/npm/aws-amplify@5.3.11/+esm';
+		import awsconfig from './auth-config.js';
+
+		Amplify.configure(awsconfig);
+		window.Amplify = Amplify;
+		window.Auth = Amplify.Auth;
     </script>
 </head>
 <body>
