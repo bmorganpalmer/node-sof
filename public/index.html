@@ -11,14 +11,14 @@
     <title>SCDHHS</title>
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Load AWS Amplify -->
-    <script type="module">
-        import { Amplify, Auth } from 'https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js';
-        import awsconfig from './auth-config.js';
+    <!-- why load twice ? -->
+	<script type="module">
+		import { Amplify, Auth } from 'https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js';
+		import awsconfig from './auth-config.js';
 
-        Amplify.configure(awsconfig);
-        window.Auth = Auth;  // Expose Auth globally for use in scripts
-    </script>
+		Amplify.configure(awsconfig);
+		window.Auth = Amplify.Auth;
+	</script>
 </head>
 
 <body>
@@ -32,46 +32,44 @@
             </div>
         </div>
 
-        <p>Cognito User Pool User Authentication.</p>
+        <p>Cognito User Authentication.</p>
     </div>
 
-<script>
-    window.onload = async function() {
-        // Load AWS Amplify dynamically to avoid import issues
-        const script = document.createElement("script");
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js";
-        script.onload = function() {
-            console.log("AWS Amplify loaded");
-            configureAuth();
-        };
-        document.head.appendChild(script);
-    };
+	<script type="module">
+		import { Amplify, Auth } from 'https://cdnjs.cloudflare.com/ajax/libs/aws-amplify/5.3.11/aws-amplify.min.js';
+		import awsconfig from './auth-config.js';
 
-    function configureAuth() {
-        fetch('./auth-config.js')
-            .then(response => response.json())
-            .then(awsconfig => {
-                Amplify.configure(awsconfig);
-                window.Auth = Amplify.Auth;
-                checkAuth();
-            })
-            .catch(error => console.error("Failed to load auth config", error));
-    }
+		Amplify.configure(awsconfig);
+		window.Auth = Amplify.Auth;
 
-    async function checkAuth() {
-        try {
-            const user = await Auth.currentAuthenticatedUser();
-            console.log('User is signed in:', user);
-            document.getElementById('username-display').textContent = user.username || 'Authenticated User';
-            document.getElementById('logout-btn').style.display = 'block';
-            document.getElementById('login-btn').style.display = 'none';
-        } catch (error) {
-            console.log('User is not signed in');
-            document.getElementById('logout-btn').style.display = 'none';
-            document.getElementById('login-btn').style.display = 'block';
-        }
-    }
-</script>
+		document.addEventListener('DOMContentLoaded', async () => {
+			try {
+				const user = await Auth.currentAuthenticatedUser();
+				console.log('User signed in:', user);
+				document.getElementById('username-display').textContent = user.username || 'Authenticated User';
+				document.getElementById('logout-btn').style.display = 'block';
+				document.getElementById('login-btn').style.display = 'none';
+			} catch (error) {
+				console.log('User not signed in');
+				document.getElementById('logout-btn').style.display = 'none';
+				document.getElementById('login-btn').style.display = 'block';
+			}
+		});
+
+		document.getElementById('login-btn').addEventListener('click', () => {
+			window.location.href = '/login.html';
+		});
+
+		document.getElementById('logout-btn').addEventListener('click', async () => {
+			try {
+				await Auth.signOut();
+				console.log('Successfully signed out');
+				window.location.href = '/login.html';
+			} catch (error) {
+				console.error('Error signing out:', error);
+			}
+		});
+	</script>
 
 </body>
 </html>
